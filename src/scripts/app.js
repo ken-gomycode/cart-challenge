@@ -21,6 +21,7 @@ const addCartItems = (product, quantity) => {
 const removeFromCart = (itemName) => {
     cartData.items = cartData.items.filter(item => item.name !== itemName);
     updateCartTotal();
+    renderProducts();
     renderCartSummary();
 }
 
@@ -30,29 +31,54 @@ const updateCartTotal = () => {
     cartData.total = total.toFixed(2);
 }
 
+const getProductCtaHtml = (product) => {
+    const isInCart = cartData.items.find(item => item.name === product.name);
+    const quantity = isInCart ? isInCart.quantity : 0;
+    if (!isInCart) {
+        return `
+            <div class="cta">
+                <button class="w-[200px] bg-white px-6 py-2 cursor-pointer inline-flex gap-2 justify-center items-center">
+                    <img alt="add to cart image" src="./assets/images/icon-add-to-cart.svg" />
+                    <span>Add to Cart</span>
+                </button>
+            </div>
+        `
+    }
+
+    return `
+        <div class="cta px-10">
+            <button class="active w-[200px] bg-primary px-6 py-2 cursor-pointer inline-flex gap-2 items-center justify-between">
+                <span>-</span>
+                <span>${quantity}</span>
+                <span>+</span>
+            </button>
+        </div>
+    `
+}
+
 const renderProducts = () => {
     if (!productsContainerEl) return;
 
-    productsContainerEl.innerHTML = products.map((product) => {
+    const productCards = products.map((product) => {
         const formattedPrice = product.price.toFixed(2);
-        return `
+        const wrapper = document.createElement('div');
+        const ctaContent = getProductCtaHtml(product);
+        wrapper.innerHTML = `
             <div class="product-card mb-4">
                 <img class="thumbnail" alt="product card - ${product.name}" src="${product.image.tablet}" />
                 <div class="relative pt-10">
-                    <div class="cta">
-                        <button class="bg-white px-6 py-2 cursor-pointer inline-flex gap-2 items-center">
-                            <img alt="add to cart image" src="./assets/images/icon-add-to-cart.svg" />
-                            <span>Add to Cart</span>
-                        </button>
-                    </div>
-                    
+                    ${ctaContent}
                     <p class="opacity-50">${product.category}</p>
                     <p class="text-lg font-medium">${product.name}</p>
                     <p class="text-primary text-2xl font-medium">$${formattedPrice}</p>
                 </div>
             </div>
         `;
-    }).join('');
+        return wrapper;
+    });
+
+    productsContainerEl.innerHTML = '';
+    productsContainerEl.append(...productCards);
 }
 
 const renderCartItemRows = () => {

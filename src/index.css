@@ -6,6 +6,11 @@ body {
     color: #de4314;
 }
 
+.bg-primary {
+    background: #de4314;
+    color: white;
+}
+
 button.cta {
     background: #de4314;
     color: white;
@@ -51,6 +56,10 @@ button.cta {
 .product-card button {
     border-radius: 30px;
     border: 1px solid #8a1a00;
+}
+
+.product-card button.active {
+    border: none;
 }
 
 #cart-summary {
