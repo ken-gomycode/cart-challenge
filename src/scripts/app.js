@@ -3,7 +3,8 @@ const cartSummaryContainerEl = document.querySelector('#cart-summary');
 
 const cartData = {
     items: [],
-    total: 0
+    total: 0,
+    orderConfirmed: false,
 }
 
 const addCartItems = (product, quantity) => {
@@ -15,14 +16,27 @@ const addCartItems = (product, quantity) => {
         price,
         thumbnail: image.thumbnail
     });
-    updateCartTotal();
+
+    renderUi();
 }
 
 const removeFromCart = (itemName) => {
     cartData.items = cartData.items.filter(item => item.name !== itemName);
-    updateCartTotal();
-    renderProducts();
-    renderCartSummary();
+    renderUi();
+}
+
+const updateCartItemQuantity = (itemName, quantity) => {
+    const item = cartData.items.find(item => item.name === itemName);
+    if(!item) return;
+
+    item.quantity = quantity;
+
+    if (item.quantity) {
+        renderUi();
+        return;
+    }
+
+    removeFromCart(item.name); // remove from cart if quantity === 0
 }
 
 const updateCartTotal = () => {
@@ -47,10 +61,10 @@ const getProductCtaHtml = (product) => {
 
     return `
         <div class="cta px-10">
-            <button class="active w-[200px] bg-primary px-6 py-2 cursor-pointer inline-flex gap-2 items-center justify-between">
-                <span>-</span>
+            <button class="carted w-[200px] bg-primary px-6 py-1 cursor-pointer inline-flex gap-2 items-center justify-between">
+                <span class="cursor-pointer decrement py-1 px-3" >-</span>
                 <span>${quantity}</span>
-                <span>+</span>
+                <span class="cursor-pointer increment py-1 px-3">+</span>
             </button>
         </div>
     `
@@ -74,6 +88,21 @@ const renderProducts = () => {
                 </div>
             </div>
         `;
+
+        // Add event listeners
+        const ctaButton = wrapper.querySelector('button');
+        if (ctaButton.classList.contains('carted')) { // item is in cart
+            const cartItem = cartData.items.find(item => item.name === product.name);
+            const incrementBtn = wrapper.querySelector('.increment');
+            const decrementBtn = wrapper.querySelector('.decrement');
+
+            // conditionally add event listeners
+            incrementBtn?.addEventListener('click', () => updateCartItemQuantity(product.name, cartItem.quantity + 1));
+            decrementBtn?.addEventListener('click', () => updateCartItemQuantity(product.name, cartItem.quantity - 1));
+        } else {
+            ctaButton.addEventListener('click', () => addCartItems(product, 1));
+        }
+
         return wrapper;
     });
 
@@ -102,7 +131,7 @@ const renderCartItemRows = () => {
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <button>
+                    <button class="cursor-pointer">
                         <i class="opacity-40 fa-regular fa-circle-xmark"></i>
                     </button>
                 </div>
@@ -165,11 +194,11 @@ const initCart = () => {
     addCartItems(secondProduct, 5);
 }
 
-const render = () => {
+const renderUi = () => {
     updateCartTotal();
     renderCartSummary();
     renderProducts();
 }
 
 initCart();
-render()
+renderUi()

@@ -58,7 +58,7 @@ button.cta {
     border: 1px solid #8a1a00;
 }
 
-.product-card button.active {
+.product-card button.carted {
     border: none;
 }
 
