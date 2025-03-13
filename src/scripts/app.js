@@ -7,6 +7,13 @@ const cartData = {
     orderConfirmed: false,
 }
 
+const resetCart = () => {
+    cartData.items = [];
+    cartData.total = 0;
+    cartData.orderConfirmed = false;
+    renderUi();
+}
+
 const addCartItems = (product, quantity) => {
     const { name, category, price, image } = product;
     cartData.items.push({
@@ -82,9 +89,9 @@ const renderProducts = () => {
                 <img class="thumbnail" alt="product card - ${product.name}" src="${product.image.tablet}" />
                 <div class="relative pt-10">
                     ${ctaContent}
-                    <p class="opacity-50">${product.category}</p>
-                    <p class="text-lg font-medium">${product.name}</p>
-                    <p class="text-primary text-2xl font-medium">$${formattedPrice}</p>
+                    <p class="opacity-50 text-sm">${product.category}</p>
+                    <p class="text-base font-medium">${product.name}</p>
+                    <p class="text-primary text-lg font-medium">$${formattedPrice}</p>
                 </div>
             </div>
         `;
@@ -185,7 +192,47 @@ const renderCartSummary = () => {
         </div>
     `;
 
+    cartSummaryContainerEl.querySelector('button.cta').addEventListener('click', renderConfirmationModal);
     renderCartItemRows();
+}
+
+const renderConfirmationModal = () => {
+    const modal = document.querySelector('.confirmation-modal');
+    if (!modal) return;
+
+    const orderItemsHtml = cartData.items.map(item => {
+        const amount = Number(item.quantity * item.price).toFixed(2);
+        return `
+            <div class="flex justify-between items-center py-4 bottom-border">
+                <div>
+                    <img alt="${item.name} image" class="h-[60px] w-[60px] rounded" src="${item.thumbnail}" />
+                </div>
+            
+                <div class="flex-auto pl-3 items-center gap-4">
+                    <div class="font-medium mb-1">${item.name}</div>
+                    <div>
+                       <span class="text-primary pr-3">${item.quantity}x</span>
+                       <span class="opacity-50 text-xs" >@</span>
+                       <span class="opacity-50 text-sm">$${item.price.toFixed(2)} </span>
+                    </div>
+                </div>
+                
+                <div>$${amount}</div>
+            </div>
+        `;
+    }).join('');
+
+    modal.querySelector('.modal-content').innerHTML = orderItemsHtml;
+
+    modal.querySelector('#order-total').textContent = `$${cartData.total}`;
+    modal.classList.toggle('hidden');
+    modal.classList.toggle('flex');
+
+    modal.querySelector('button').addEventListener('click', () => {
+        modal.classList.toggle('hidden');
+        modal.classList.toggle('flex');
+        resetCart();
+    }, { once: true });
 }
 
 const initCart = () => {

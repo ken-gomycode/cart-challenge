@@ -10,17 +10,40 @@
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
-  <main class="mt-10 mx-[150px] flex" >
-    <section class="w-3/4">
+  <main class="my-10 mx-[20px] md:mx-[50px] lg:mx-[150px] md:flex" >
+    <section class="w-full md:w-1/2 lg:w-full">
       <h3 class="text-4xl font-bold">Desserts</h3>
 
-      <div id="products-wrapper" class="grid gap-6 mt-6">
+      <div id="products-wrapper" class="grid gap-6 mt-6 md:pb-[100px] md:pr-[30px]">
         <!--  Products will be inserted here -->
       </div>
     </section>
 
-    <section id="cart-summary" class="w-1/4">
+    <section id="cart-summary" class="w-full md:w-1/2 lg:w-[500px] pt-[60px]">
       <!-- Cart summary will be inserted here -->
+    </section>
+
+    <section class="confirmation-modal hidden" >
+      <div class="inner bg-white rounded-md p-4 md:p-8 mx-2 md:mx-auto w-[90%] md:w-[600px]" >
+        <div class="text-green-600 text-4xl mb-4">
+          <i class="fa-regular fa-circle-check"></i>
+        </div>
+        <div class="text-3xl font-bold mb-1">Order Confirmed</div>
+        <p class="opacity-50 text-sm">We hope you enjoy your food</p>
+
+        <div class="bg-gray-50 rounded-lg p-3 my-6">
+          <div class="modal-content" >
+            <!--  Items are dynamically injected via JS -->
+          </div>
+
+          <div class="flex-between py-4" >
+            <span>Order Total</span>
+            <span id="order-total" class="text-2xl font-bold">$45.60</span>
+          </div>
+        </div>
+
+        <button class="cta">Start New Order</button>
+      </div>
     </section>
   </main>
 
