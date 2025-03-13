@@ -86,7 +86,12 @@ const renderProducts = () => {
         const ctaContent = getProductCtaHtml(product);
         wrapper.innerHTML = `
             <div class="product-card mb-4">
-                <img class="thumbnail" alt="product card - ${product.name}" src="${product.image.tablet}" />
+                <picture>
+                    <source media="(min-width: 1024px)" srcset="${product.image.desktop}">
+                    <source media="(min-width: 768px)" srcset="${product.image.tablet}">
+                    <source media="(min-width: 480px)" srcset="${product.image.mobile}">
+                    <img class="thumbnail" alt="product card - ${product.name}" src="${product.image.thumbnail}" />
+                </picture>
                 <div class="relative pt-10">
                     ${ctaContent}
                     <p class="opacity-50 text-sm">${product.category}</p>
